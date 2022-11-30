@@ -1,0 +1,20 @@
+{
+    "name": "sinko/composer",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "andrey",
+            "email": "sinko02@inbox.ru"
+        }
+    ],
+    "require": {
+        "slim/slim": "4.*",
+        "slim/psr7": "^1.6",
+        "nyholm/psr7": "^1.5",
+        "nyholm/psr7-server": "^1.0"
+    }
+}
