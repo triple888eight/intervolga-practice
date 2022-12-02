@@ -4,5 +4,5 @@ namespace App;
 
 // Конфиг, хранит путь к базе данных
 class Config {
-    const dataBasePath = 'reviews.db';
+     const dataBasePath =  __DIR__ . "/../db/reviews.db";
 }
