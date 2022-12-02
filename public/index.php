@@ -40,8 +40,8 @@ $app->get('/connect', function (Request $request, Response $response, array $arg
 
 });
 
-// Получение отзыв
-$app->get('/api/feedbacks/{id}/', function (Request $request, Response $response, array $args){
+// Получение отзыва
+$app->get('/api/feedbacks/id={id}/', function (Request $request, Response $response, array $args){
     header('Content-type: application/json; charset=utf-8');
 
     $pdo = (new Connection())->connect(); // Подключение к БД
@@ -50,7 +50,30 @@ $app->get('/api/feedbacks/{id}/', function (Request $request, Response $response
     $id = (int)$args['id'];
 
     $result = $sqlite->getReviewById($id, $pdo);
-    /*echo json_encode($result, JSON_UNESCAPED_UNICODE);*/
+
+    $response->getBody()->write($result);
+
+    // из документации
+    return $response ->withHeader('content-type','application/json');
+});
+
+// Постраничный вывод отзывов, страницы указывается как page=...
+$app->get('/api/feedbacks', function (Request $request, Response $response, array $args) {
+    header('Content-type: application/json; charset=utf-8');
+
+    $pdo = (new Connection())->connect(); // Подключение к БД
+    $sqlite = new reviewStorage;
+
+    // Берем значение page из GET запроса, если его нет, то выводится 1 страница
+    if($_GET) $page = $_GET['page'];
+    else $page = 1;
+
+    // Вызывается метод из reviewStorage
+    $result = $sqlite->getNavReview($page, $pdo);
+
+    /*$array = json_decode($result);
+    print_r($array);*/
+
     $response->getBody()->write($result);
 
     // из документации
