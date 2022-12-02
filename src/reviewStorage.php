@@ -41,7 +41,10 @@ class reviewStorage
         $page = $page - 1;
         $page = $page * $records; // Определяем какая страницы
 
-        $sql = 'SELECT * FROM reviews LIMIT :page, :records;';
+        $sql = 'SELECT * 
+                FROM reviews 
+                ORDER BY date asc
+                LIMIT :page, :records;';
         $stmt = $pdo->prepare($sql);
 
         $stmt->execute([':page' => $page, ':records' => $records]);

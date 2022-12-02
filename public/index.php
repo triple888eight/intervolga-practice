@@ -41,7 +41,7 @@ $app->get('/connect', function (Request $request, Response $response, array $arg
 });
 
 // Получение отзыва
-$app->get('/api/feedbacks/id={id}/', function (Request $request, Response $response, array $args){
+$app->get('/api/feedbacks/{id}/', function (Request $request, Response $response, array $args){
     header('Content-type: application/json; charset=utf-8');
 
     $pdo = (new Connection())->connect(); // Подключение к БД
@@ -54,7 +54,7 @@ $app->get('/api/feedbacks/id={id}/', function (Request $request, Response $respo
     $response->getBody()->write($result);
 
     // из документации
-    return $response ->withHeader('content-type','application/json');
+    return $response->withHeader('content-type','application/json');
 });
 
 // Постраничный вывод отзывов, страницы указывается как page=...
@@ -77,7 +77,7 @@ $app->get('/api/feedbacks', function (Request $request, Response $response, arra
     $response->getBody()->write($result);
 
     // из документации
-    return $response ->withHeader('content-type','application/json');
+    return $response->withHeader('content-type','application/json');
 });
 
 
