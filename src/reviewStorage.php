@@ -26,7 +26,8 @@ class reviewStorage
         return json_encode($reviews,JSON_UNESCAPED_UNICODE);
     }
 
-    public function getNavReview($page, $pdo)
+    // Функция отображения базы данных постранично
+    public function getNavReviews($page, $pdo)
     {
         $rows = $pdo->query('SELECT count(*)
                              FROM reviews')->fetchColumn(); // Получаем количество записей
@@ -52,6 +53,25 @@ class reviewStorage
 
         // JSON_UNESCAPED_UNICODE необходим для кириллицы
         return json_encode($reviews,JSON_UNESCAPED_UNICODE);
+    }
+
+    // Функция добавления отзыва
+    public function addReview($pdo, $data)
+    {
+        $guest_id = $data['guest_id'];
+        $rating = $data['rating'];
+        $review = $data['review'];
+        $date = $data['date'];
+
+        $sql = 'INSERT INTO reviews (guest_id, rating, review, date)
+                VALUES (:guest_id, :rating, :review, :date);';
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute([':guest_id' => $guest_id, ':rating' => $rating, ':review' => $review, ':date' => $date]);
+
+        $response = 'Запись добавлена!';
+        return $response;
     }
 }
 

@@ -3,14 +3,16 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
+use Slim\Views\PhpRenderer;
 use App\Connection;
 use App\reviewStorage;
 
 require __DIR__ . '/../vendor/autoload.php'; // Автозагрузка
 
 $app = AppFactory::create();
+$container = $app->getContainer();
 
-$app->setBasePath("/composer/public/index.php"); // Указываю базовый путь, иначе ошибка
+/*$app->setBasePath("/composer/public/index.php"); // Указываю базовый путь, иначе ошибка*/
 
 // Hello world
 $app->get('/', function (Request $request, Response $response, $args) {
@@ -42,7 +44,7 @@ $app->get('/connect', function (Request $request, Response $response, array $arg
 
 // Получение отзыва
 $app->get('/api/feedbacks/{id}/', function (Request $request, Response $response, array $args){
-    header('Content-type: application/json; charset=utf-8');
+    /*header('Content-type: application/json; charset=utf-8');*/
 
     $pdo = (new Connection())->connect(); // Подключение к БД
 
@@ -54,12 +56,13 @@ $app->get('/api/feedbacks/{id}/', function (Request $request, Response $response
     $response->getBody()->write($result);
 
     // из документации
-    return $response->withHeader('content-type','application/json');
+    /*return $response->withHeader('content-type','application/json');*/
+    return $response;
 });
 
 // Постраничный вывод отзывов, страницы указывается как page=...
-$app->get('/api/feedbacks', function (Request $request, Response $response, array $args) {
-    header('Content-type: application/json; charset=utf-8');
+$app->get('/api/feedbacks/', function (Request $request, Response $response, array $args) {
+    /*header('Content-type: application/json; charset=utf-8');*/
 
     $pdo = (new Connection())->connect(); // Подключение к БД
     $sqlite = new reviewStorage;
@@ -69,7 +72,7 @@ $app->get('/api/feedbacks', function (Request $request, Response $response, arra
     else $page = 1;
 
     // Вызывается метод из reviewStorage
-    $result = $sqlite->getNavReview($page, $pdo);
+    $result = $sqlite->getNavReviews($page, $pdo);
 
     /*$array = json_decode($result);
     print_r($array);*/
@@ -77,13 +80,37 @@ $app->get('/api/feedbacks', function (Request $request, Response $response, arra
     $response->getBody()->write($result);
 
     // из документации
-    return $response->withHeader('content-type','application/json');
+    /*return $response->withHeader('content-type','application/json');*/
+    return $response;
 });
 
+$app->get('/add', function (Request $request, Response $response){
+    header('Content-type: text/html; charset=utf-8');
+    $renderer = new PhpRenderer("../templates");
+    return $renderer->render($response,"add_review.php");
+});
 
-try {
+$app->post('/adding', function (Request $request, Response $response){
+    header('Content-type: text/html; charset=utf-8');
+
+    $pdo = (new Connection())->connect(); // Подключение к БД
+    $sqlite = new reviewStorage;
+
+    // Получаю значения с формы в массив
+    $data = $request->getParsedBody();
+
+    $result = $sqlite->addReview($pdo, $data);
+    $response->getBody()->write($result);
+
+    /*print_r($data);*/
+    return $response;
+});
+
+$app->run();
+
+/*try {
      $app->run();
  } catch (Exception $e) {
      // Сообщение об ошибке
      die( json_encode(array("status" => "failed", "message" => "This action is not allowed")));
- }
+ }*/
