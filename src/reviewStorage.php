@@ -68,9 +68,25 @@ class reviewStorage
 
         $stmt = $pdo->prepare($sql);
 
-        $stmt->execute([':guest_id' => $guest_id, ':rating' => $rating, ':review' => $review, ':date' => $date]);
+        $result = $stmt->execute([':guest_id' => $guest_id, ':rating' => $rating, ':review' => $review, ':date' => $date]);
 
-        $response = 'Запись добавлена!';
+        $response = 'Запись добавлена, проверяйте!';
+
+        return $response;
+    }
+
+    public function deleteReview($pdo, $data)
+    {
+        $id = $data['id'];
+
+        $sql = 'DELETE FROM reviews
+                WHERE id = :id;';
+
+        $stmt = $pdo->prepare($sql);
+        $result = $stmt->execute([':id' => $id]);
+
+        $response = 'Запись удалена, проверяйте!';
+
         return $response;
     }
 }

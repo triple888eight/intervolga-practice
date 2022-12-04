@@ -77,21 +77,24 @@ $app->get('/api/feedbacks/', function (Request $request, Response $response, arr
     /*$array = json_decode($result);
     print_r($array);*/
 
-    $response->getBody()->write($result);
+    echo $result;
+
+    /*$response->getBody()->write($result);*/
 
     // из документации
     /*return $response->withHeader('content-type','application/json');*/
     return $response;
 });
 
+// Отображения страницы добавления пользователя
 $app->get('/add', function (Request $request, Response $response){
     header('Content-type: text/html; charset=utf-8');
     $renderer = new PhpRenderer("../templates");
     return $renderer->render($response,"add_review.php");
 });
 
+// Отправка запроса в БД
 $app->post('/adding', function (Request $request, Response $response){
-    header('Content-type: text/html; charset=utf-8');
 
     $pdo = (new Connection())->connect(); // Подключение к БД
     $sqlite = new reviewStorage;
@@ -103,6 +106,27 @@ $app->post('/adding', function (Request $request, Response $response){
     $response->getBody()->write($result);
 
     /*print_r($data);*/
+    return $response;
+});
+
+// Отображение страницы удаления
+$app->get('/delete', function (Request $request, Response $response){
+    header('Content-type: text/html; charset=utf-8');
+
+    $renderer = new PhpRenderer("../templates");
+    return $renderer->render($response,"delete_review.php");
+});
+
+$app->post('/deleting', function (Request $request, Response $response) {
+    $pdo = (new Connection())->connect(); // Подключение к БД
+    $sqlite = new reviewStorage;
+
+    // Получаю значения с формы в массив
+    $data = $request->getParsedBody();
+
+    $result = $sqlite->deleteReview($pdo, $data);
+    $response->getBody()->write($result);
+
     return $response;
 });
 
