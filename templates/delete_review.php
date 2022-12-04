@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>Страница удаления</title>
     <style>
-        <?php include "style.css" ?>
+        <?php include "css/style.css" ?>
     </style>
     <?php require_once('logic.php');?>
 </head>
 <body>
     <div>
+        <h1>Вы попали на страницу удаления отзывов</h1>
         <form method = "POST" action="/deleting" class="form">
             <fieldset>
                 <legend>ВВЕДИТЕ ID ДЛЯ УДАЛЕНИЯ</legend>

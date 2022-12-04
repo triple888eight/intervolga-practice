@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>Страница добавления</title>
     <style>
-        <?php include "style.css" ?>
+        <?php include "css/style.css" ?>
     </style>
+    <?php require_once('logic.php');?>
 </head>
 <body>
-<h1>Вы попали на страницу добавления отзывов</h1>
 <div>
+    <h1>Вы попали на страницу добавления отзывов</h1>
     <form method = "POST" action="/adding" class="form">
         <fieldset>
             <legend>ВВЕДИТЕ ОТЗЫВ</legend>
@@ -33,6 +34,31 @@
                 <button type="submit" class="btn">Добавить</button>
             </p>
         </fieldset>
+
+        <table class="table">
+            <caption>Отзывы. Отсортированы по дате добавления</caption>
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>Номер гостя</th>
+                <th>Рейтинг</th>
+                <th>Отзыв</th>
+                <th>Дата добавления</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <?php foreach($reviews as $review): ?>
+                <tr>
+                    <td><?= $review['id']?></td>
+                    <td><?= $review['guest_id']?></td>
+                    <td><?= $review['rating']?></td>
+                    <td><?= $review['review']?></td>
+                    <td><?= $review['date']?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
     </form>
 </div>
 </body>
