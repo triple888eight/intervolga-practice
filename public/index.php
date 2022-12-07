@@ -4,8 +4,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Views\PhpRenderer;
+use Tuupola\Middleware\HttpBasicAuthentication as Auth;
 use App\Connection;
 use App\reviewStorage;
+use App\Config;
 
 require __DIR__ . '/../vendor/autoload.php'; // Автозагрузка
 
@@ -39,7 +41,6 @@ $app->get('/connect', function (Request $request, Response $response, array $arg
         $response->getBody()->write('Whoops, could not connect to the SQLite database!');
         return $response;
     }
-
 });
 
 // Получение отзыва
@@ -108,6 +109,15 @@ $app->post('/adding', function (Request $request, Response $response){
     /*print_r($data);*/
     return $response;
 });
+
+// Аутентификация пользователя, защита для страницы удаления пользователей по адресу /delete
+$app->add(new Auth([
+    "path" => "/delete",
+    "realm" => "Protected",
+    "users" => [
+        Config::logAdmin => Config::passAdmin
+    ]
+]));
 
 // Отображение страницы удаления
 $app->get('/delete', function (Request $request, Response $response){
