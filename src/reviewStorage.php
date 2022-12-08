@@ -76,6 +76,7 @@ class reviewStorage
         return $response;
     }
 
+    //Функция удаления отзыва
     public function deleteReview($pdo, $data)
     {
         $id = $data['id'];
@@ -89,6 +90,25 @@ class reviewStorage
         $response = 'Запись удалена, проверяйте!';
 
         return $response;
+    }
+
+    //Функция добавления отзыва, которая вызывается с помощью Js
+    public function addReviewByJs ($pdo, $data)
+    {
+
+        $guest_id = $data['guest_id'];
+        $rating = $data['rating'];
+        $review = $data['review'];
+        $date = $data['date'];
+
+        $sql = 'INSERT INTO reviews (guest_id, rating, review, date)
+                VALUES (:guest_id, :rating, :review, :date);';
+
+        $stmt = $pdo->prepare($sql);
+
+        $result = $stmt->execute([':guest_id' => $guest_id, ':rating' => $rating, ':review' => $review, ':date' => $date]);
+
+        return $result;
     }
 }
 

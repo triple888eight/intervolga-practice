@@ -103,7 +103,7 @@ $app->post('/adding', function (Request $request, Response $response){
     // Получаю значения с формы в массив
     $data = $request->getParsedBody();
 
-    $result = $sqlite->addReview($pdo, $data);
+    $result = $sqlite->addReviewJs($pdo, $data);
     $response->getBody()->write($result);
 
     /*print_r($data);*/
@@ -145,6 +145,21 @@ $app->get('/api/add', function (Request $request, Response $response){
 
     $renderer = new PhpRenderer("../templates");
     return $renderer->render($response,"add_review_js.php");
+});
+
+$app->post('/api/adding', function (Request $request, Response $response){
+
+    $pdo = (new Connection())->connect(); // Подключение к БД
+    $sqlite = new reviewStorage;
+
+    // Получаю значения с формы в массив
+    $data = $request->getParsedBody();
+    
+    $result = $sqlite->addReviewByJs($pdo, $data);
+
+    $response->getBody()->write(json_encode($result));
+
+    return $response;
 });
 
 $app->run();

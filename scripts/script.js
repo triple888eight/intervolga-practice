@@ -1,5 +1,6 @@
 //Кнопка next
 $('#next').on('click', function (e){
+    e.preventDefault();
 
     // Получаю элемент с id get Pages, то есть форму
     var form = $('#getPages');
@@ -9,7 +10,7 @@ $('#next').on('click', function (e){
 
     $.ajax({
         type: "GET",
-        url: '/api/feedbacks/',
+        url: "/api/feedbacks/",
         dataType: "json",
         data: form.serialize(), // Получаю данные с формы
         success: function(data)
@@ -35,6 +36,7 @@ $('#next').on('click', function (e){
 
 //Кнопка previous
 $('#previous').on('click', function (e){
+    e.preventDefault();
 
     // Получаю элемент с id get Pages, то есть форму
     var form = $('#getPages');
@@ -44,7 +46,7 @@ $('#previous').on('click', function (e){
 
     $.ajax({
         type: "GET",
-        url: '/api/feedbacks/',
+        url: "/api/feedbacks/",
         dataType: "json",
         data: form.serialize(), // Получаю данные с формы
         success: function(data)
@@ -64,6 +66,25 @@ $('#previous').on('click', function (e){
         },
         error: function () {
             $('#page')[0].value = parseInt($('#page')[0].value) + 1;
+        }
+    });
+})
+
+//Кнопка добавления отзыва
+$('#addPost').on('submit', function (e){
+    e.preventDefault();
+
+    //DOM элемент
+    var form = $(this);
+
+    $.ajax({
+        type: "POST",
+        url: "/api/adding",
+        dataType: "json",
+        data: form.serialize(), // Получаю данные с формы
+        success: function(data)
+        {
+            alert("Запись добавлена, проверяйте!");
         }
     });
 })

@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Вы попали на страницу добавления отзывов</h1>
-    <form method ="POST" action="/api/add" class="form" id="addPost">
+    <form method ="POST" action="/api/adding" class="form" id="addPost">
         <fieldset>
             <legend>ВВЕДИТЕ ОТЗЫВ</legend>
             <p>
