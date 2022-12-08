@@ -32,7 +32,7 @@ class reviewStorage
         $rows = $pdo->query('SELECT count(*)
                              FROM reviews')->fetchColumn(); // Получаем количество записей
 
-        // Проверяем GET запрос
+        // Проверяем GET запрос,
         if (($page - 1 > $rows / 20) || ($page <= 0)) {
             $reviews = [];
             return $reviews;
@@ -76,7 +76,6 @@ class reviewStorage
         return $response;
     }
 
-    //Функция удаления отзыва
     public function deleteReview($pdo, $data)
     {
         $id = $data['id'];
@@ -92,14 +91,21 @@ class reviewStorage
         return $response;
     }
 
-    //Функция добавления отзыва, которая вызывается с помощью Js
     public function addReviewByJs ($pdo, $data)
     {
-
         $guest_id = $data['guest_id'];
         $rating = $data['rating'];
         $review = $data['review'];
         $date = $data['date'];
+
+        // Количество не пустых элементов в массиве
+        $filledValues = count(array_filter($data));
+
+        // Если не все поля заполнены
+        if(count($data) != $filledValues)
+        {
+            return "Ошибка. Заполните все поля";
+        }
 
         $sql = 'INSERT INTO reviews (guest_id, rating, review, date)
                 VALUES (:guest_id, :rating, :review, :date);';
@@ -108,7 +114,13 @@ class reviewStorage
 
         $result = $stmt->execute([':guest_id' => $guest_id, ':rating' => $rating, ':review' => $review, ':date' => $date]);
 
-        return $result;
+        // Если не получился запрос
+        if(!$result)
+        {
+            return "Ошибка при добавлении в базу данных";
+        }
+
+        return "Запись успешно добавлена. Проверяйте";
     }
 }
 

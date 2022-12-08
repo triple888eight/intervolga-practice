@@ -77,6 +77,7 @@ $('#addPost').on('submit', function (e){
     //DOM элемент
     var form = $(this);
 
+    /*debugger;*/
     $.ajax({
         type: "POST",
         url: "/api/adding",
@@ -84,8 +85,12 @@ $('#addPost').on('submit', function (e){
         data: form.serialize(), // Получаю данные с формы
         success: function(data)
         {
-            alert("Запись добавлена, проверяйте!");
+            alert(data); // Вывожу сообщение из функции addReviewByJs
+        },
+        error: function(data) {
+            alert('Ошибка');
         }
+
     });
 })
 

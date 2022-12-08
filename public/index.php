@@ -84,6 +84,11 @@ $app->get('/api/feedbacks/', function (Request $request, Response $response, arr
 
     // из документации
     /*return $response->withHeader('content-type','application/json');*/
+
+    if (!$response){
+        return $response->withStatus(400);
+    }
+
     return $response;
 });
 
@@ -103,7 +108,7 @@ $app->post('/adding', function (Request $request, Response $response){
     // Получаю значения с формы в массив
     $data = $request->getParsedBody();
 
-    $result = $sqlite->addReviewJs($pdo, $data);
+    $result = $sqlite->addReview($pdo, $data);
     $response->getBody()->write($result);
 
     /*print_r($data);*/
@@ -154,7 +159,7 @@ $app->post('/api/adding', function (Request $request, Response $response){
 
     // Получаю значения с формы в массив
     $data = $request->getParsedBody();
-    
+
     $result = $sqlite->addReviewByJs($pdo, $data);
 
     $response->getBody()->write(json_encode($result));
