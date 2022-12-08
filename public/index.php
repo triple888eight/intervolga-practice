@@ -31,7 +31,7 @@ $app->get('/hello/{name}', function (Request $request, Response $response, array
 
 // Проверка на подключение к базе данных
 $app->get('/connect', function (Request $request, Response $response, array $args) {
-    $pdo = (new Connection())->connect();
+    $pdo = Connection::connect(); // Подключение к БД
 
     if ($pdo != null) { // Проверка, есть ли подключение к БД
         $response->getBody()->write('Connected to the SQLite database successfully!');
@@ -47,7 +47,7 @@ $app->get('/connect', function (Request $request, Response $response, array $arg
 $app->get('/api/feedbacks/{id}/', function (Request $request, Response $response, array $args){
     /*header('Content-type: application/json; charset=utf-8');*/
 
-    $pdo = (new Connection())->connect(); // Подключение к БД
+    $pdo = Connection::connect(); // Подключение к БД
 
     $sqlite = new reviewStorage;
     $id = (int)$args['id'];
@@ -65,7 +65,7 @@ $app->get('/api/feedbacks/{id}/', function (Request $request, Response $response
 $app->get('/api/feedbacks/', function (Request $request, Response $response, array $args) {
     /*header('Content-type: application/json; charset=utf-8');*/
 
-    $pdo = (new Connection())->connect(); // Подключение к БД
+    $pdo = Connection::connect(); // Подключение к БД
     $sqlite = new reviewStorage;
 
     // Берем значение page из GET запроса, если его нет, то выводится 1 страница
@@ -102,7 +102,8 @@ $app->get('/add', function (Request $request, Response $response){
 // Отправка запроса в БД
 $app->post('/adding', function (Request $request, Response $response){
 
-    $pdo = (new Connection())->connect(); // Подключение к БД
+    $pdo = Connection::connect(); // Подключение к БД
+
     $sqlite = new reviewStorage;
 
     // Получаю значения с формы в массив
@@ -133,7 +134,8 @@ $app->get('/delete', function (Request $request, Response $response){
 });
 
 $app->post('/deleting', function (Request $request, Response $response) {
-    $pdo = (new Connection())->connect(); // Подключение к БД
+    $pdo = Connection::connect(); // Подключение к БД
+
     $sqlite = new reviewStorage;
 
     // Получаю значения с формы в массив
@@ -153,8 +155,8 @@ $app->get('/api/add', function (Request $request, Response $response){
 });
 
 $app->post('/api/adding', function (Request $request, Response $response){
+    $pdo = Connection::connect(); // Подключение к БД
 
-    $pdo = (new Connection())->connect(); // Подключение к БД
     $sqlite = new reviewStorage;
 
     // Получаю значения с формы в массив

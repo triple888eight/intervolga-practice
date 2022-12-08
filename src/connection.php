@@ -4,17 +4,18 @@ namespace App;
 
 // Подключение к базе данных
 class Connection {
+    private static $pdo = null;
 
-    private $pdo;
-   
-    public function connect() {
+    public static function connect() {
 
-      try {
-          $this->pdo = new \PDO("sqlite:" . Config::dataBasePath);
-      } catch (\PDOException $e) {
-           //
-      }
-      return $this->pdo;
+        if (static::$pdo == null) {
+            try {
+                static::$pdo = new \PDO("sqlite:" . Config::dataBasePath);
+            } catch (\PDOException $e) {
+                //
+            }
+        }
+
+        return static::$pdo;
     }
-
 }
