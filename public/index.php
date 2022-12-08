@@ -140,6 +140,13 @@ $app->post('/deleting', function (Request $request, Response $response) {
     return $response;
 });
 
+$app->get('/api/add', function (Request $request, Response $response){
+    header('Content-type: text/html; charset=utf-8');
+
+    $renderer = new PhpRenderer("../templates");
+    return $renderer->render($response,"add_review_js.php");
+});
+
 $app->run();
 
 /*try {

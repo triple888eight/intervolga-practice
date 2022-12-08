@@ -34,8 +34,8 @@ class reviewStorage
 
         // Проверяем GET запрос
         if (($page - 1 > $rows / 20) || ($page <= 0)) {
-            $reviews = 'Такой страницы нет';
-            return json_encode($reviews,JSON_UNESCAPED_UNICODE);
+            $reviews = [];
+            return $reviews;
         }
 
         $records = 20; // Сколько выводим записей
@@ -58,6 +58,7 @@ class reviewStorage
     // Функция добавления отзыва
     public function addReview($pdo, $data)
     {
+
         $guest_id = $data['guest_id'];
         $rating = $data['rating'];
         $review = $data['review'];
