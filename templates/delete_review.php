@@ -11,7 +11,7 @@
 <body>
     <div>
         <h1>Вы попали на страницу удаления отзывов</h1>
-        <form method = "POST" action="/deleting" class="form">
+        <form method = "POST" action="/admin/deleting" class="form">
             <fieldset>
                 <legend>ВВЕДИТЕ ID ДЛЯ УДАЛЕНИЯ</legend>
                 <p>

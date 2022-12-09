@@ -5,8 +5,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Views\PhpRenderer;
 use Tuupola\Middleware\HttpBasicAuthentication as Auth;
-use App\Connection;
-use App\reviewStorage;
 use App\Config;
 
 require __DIR__ . '/../vendor/autoload.php'; // Автозагрузка
@@ -39,7 +37,6 @@ $app->get('/api/add', function (Request $request, Response $response){
 // Добавление отзыва с помощью Js и AJAX
 $app->post('/api/adding', \App\Controllers\AddingController::class . ':AddingReviewByJs');
 
-
 // Basic аутентификация
 $app->add(new Auth([
     "path" => "/delete",
@@ -50,28 +47,14 @@ $app->add(new Auth([
 ]));
 
 // Отображение страницы удаления
-$app->get('/delete', function (Request $request, Response $response){
+$app->get('/admin/delete', function (Request $request, Response $response){
     header('Content-type: text/html; charset=utf-8');
 
     $renderer = new PhpRenderer("../templates");
     return $renderer->render($response,"delete_review.php");
 });
 
-$app->post('/deleting', function (Request $request, Response $response) {
-    $pdo = Connection::connect(); // Подключение к БД
-
-    $sqlite = new reviewStorage;
-
-    // Получаю значения с формы в массив
-    $data = $request->getParsedBody();
-
-    $result = $sqlite->deleteReview($pdo, $data);
-    $response->getBody()->write($result);
-
-    return $response;
-});
-
-/*$app->run();*/
+$app->post('/admin/deleting', \App\Controllers\DeletingController::class . ':deleteReviewById');
 
 try {
     $app->run();
