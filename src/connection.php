@@ -12,7 +12,7 @@ class Connection {
             try {
                 static::$pdo = new \PDO("sqlite:" . Config::dataBasePath);
             } catch (\PDOException $e) {
-                //
+                echo "Ошибка при подключении к базе данных";
             }
         }
 
