@@ -1,6 +1,6 @@
 <?php
 
-use App\Connection;
+use App\DB\Connection;
 use App\reviewStorage;
 
 if($_GET) $page = $_GET['page'];

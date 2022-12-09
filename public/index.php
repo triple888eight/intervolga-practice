@@ -10,21 +10,10 @@ use App\DB\Config;
 require __DIR__ . '/../vendor/autoload.php'; // Автозагрузка
 
 $app = AppFactory::create();
-$container = $app->getContainer();
 
 /*$app->setBasePath("/composer/public/index.php"); // Указываю базовый путь, иначе ошибка*/
 
-// Hello world
-$app->get('/hello', \App\Controllers\HelloController::class . ':hello');
-
-// Hello, {name}
-$app->get('/hello/{name}', \App\Controllers\HelloController::class . ':helloName');
-
-// Получение отзыва по id
-$app->get('/api/feedbacks/{id}', \App\Controllers\FeedbackController::class . ':getFeedbackById');
-
-// Постраничный вывод отзывов, страницы указывается как page=...
-$app->get('/api/feedbacks/', \App\Controllers\FeedbackController::class . ':getFeedbacksPageByPage');
+require __DIR__ . '/../routes/routes.php';
 
 // Отображение страницы для добавления пользователя
 $app->get('/api/add', function (Request $request, Response $response){
