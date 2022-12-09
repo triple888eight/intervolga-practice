@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controllers;
-use App\Connection;
+use App\DB\Connection;
 use App\reviewStorage;
 
 class AddingController {

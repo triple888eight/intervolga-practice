@@ -5,7 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Views\PhpRenderer;
 use Tuupola\Middleware\HttpBasicAuthentication as Auth;
-use App\Config;
+use App\DB\Config;
 
 require __DIR__ . '/../vendor/autoload.php'; // Автозагрузка
 
