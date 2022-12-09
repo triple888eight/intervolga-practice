@@ -19,7 +19,7 @@ $app->post('/api/adding', \App\Controllers\AddingController::class . ':AddingRev
 
 // Basic аутентификация
 $app->add(new Auth([
-    "path" => "/delete",
+    "path" => "/admin/delete",
     "realm" => "Protected",
     "users" => [
         Config::logAdmin => Config::passAdmin
