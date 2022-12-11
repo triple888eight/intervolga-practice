@@ -8,9 +8,11 @@ class Connection {
 
     public static function connect() {
 
+        $config = include(__DIR__ . '/../../config/config.php');
+
         if (static::$pdo == null) {
             try {
-                static::$pdo = new \PDO("sqlite:" . Config::dataBasePath);
+                static::$pdo = new \PDO("sqlite:" . $config['dataBasePath']);
             } catch (\PDOException $e) {
                 echo "Ошибка при подключении к базе данных";
             }

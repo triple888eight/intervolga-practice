@@ -36,12 +36,14 @@ $app->get('/api/add', function (Request $request, Response $response){
 // Добавление отзыва с помощью Js и AJAX
 $app->post('/api/adding', \App\Controllers\AddingController::class . ':AddingReviewByJs');
 
+$config = include(__DIR__ . '/../config/config.php');
+
 // Basic аутентификация
 $app->add(new Auth([
     "path" => "/admin/delete",
     "realm" => "Protected",
     "users" => [
-        Config::logAdmin => Config::passAdmin
+        $config['adminLogin'] => $config['adminPassword']
     ]
 ]));
 
