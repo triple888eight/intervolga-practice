@@ -9,6 +9,10 @@ class FeedbackController {
     public function getFeedbackById ($request, $response, $args) {
         $pdo = Connection::connect(); // Подключение к БД
 
+        if ($pdo == null) {
+            return "Ошибка при подключении к базе данных";
+        }
+
         $sqlite = new reviewStorage;
         $id = (int)$args['id'];
 
@@ -21,6 +25,11 @@ class FeedbackController {
 
     public function getFeedbacksPageByPage($request, $response) {
         $pdo = Connection::connect(); // Подключение к БД
+
+        if ($pdo == null) {
+            return "Ошибка при подключении к базе данных";
+        }
+
         $sqlite = new reviewStorage;
 
         // Берем значение page из GET запроса, если его нет, то выводится 1 страница
