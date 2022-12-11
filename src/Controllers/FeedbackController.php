@@ -24,8 +24,13 @@ class FeedbackController {
         $sqlite = new reviewStorage;
 
         // Берем значение page из GET запроса, если его нет, то выводится 1 страница
-        if($_GET) $page = $_GET['page'];
-        else $page = 1;
+        if($_GET) {
+            $params = $request->getQueryParams();
+            $page = (integer)$params['page'];
+        }
+        else {
+            $page = 1;
+        }
 
         // Вызывается метод из reviewStorage
         $result = $sqlite->getNavReviews($page, $pdo);
