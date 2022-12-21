@@ -14,7 +14,8 @@ class Connection {
             try {
                 static::$pdo = new \PDO("sqlite:" . $config['dataBasePath']);
             } catch (\PDOException $e) {
-                echo "Ошибка при подключении к базе данных";
+                echo "Ошибка при подключении к базе данных\r";
+                echo $e;
             }
         }
 
