@@ -1,0 +1,101 @@
+html, body {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.table {
+    margin-top: 2%;
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 90%;
+    border: 15px solid WhiteSmoke;
+    border-top: 5px solid WhiteSmoke;
+    border-collapse: collapse;
+}
+
+.table th {
+    font-weight: bold;
+    padding: 5px;
+    background: WhiteSmoke;
+    border: none;
+    border-bottom: 5px solid WhiteSmoke;
+}
+
+.table td {
+    padding: 5px;
+    border: none;
+    border-bottom: 5px solid WhiteSmoke;
+    border-radius: 20px;
+    text-align: center;
+}
+
+caption {
+    caption-side: bottom;
+    text-align: right;
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+.form fieldset {
+    border: 15px solid WhiteSmoke;
+    margin-top: 2%;
+    margin-left: 30%;
+    margin-right: 30%;
+    width: 40%;
+}
+
+label {
+    text-align: center;
+    display:block;
+}
+
+input {
+    text-align: center;
+    display:block;
+    margin-top: 2%;
+    margin-left: 20%;
+    margin-right: 20%;
+    width: 60%;
+    border: 4px solid DarkGrey;
+}
+
+.num {
+    margin-left: 45%;
+    margin-right: 45%;
+    width: 9%;
+}
+
+button.btn {
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    border-color: DarkGray;
+    padding: 12px;
+    background: WhiteSmoke;
+    color: black;
+    transition: 0.3s;
+    margin-left: 45%;
+    margin-right: 45%;
+}
+
+button.btn:hover {
+    background: DarkGrey;
+}
+
+h1 {
+    text-align: center;
+}
+
+.btn-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-container button {
+    display: flex;
+    margin: 1rem;
+}
+
