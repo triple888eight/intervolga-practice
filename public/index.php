@@ -44,7 +44,7 @@ $app->get('/api/add', function (Request $request, Response $response){
 });
 
 // Добавление отзыва с помощью Js и AJAX
-$app->post('/api/adding', array($feedbackController, 'AddingReviewByJs'));
+$app->post('/api/adding', array($feedbackController, 'addingReviewByJs'));
 
 $config = include(__DIR__ . '/../config/config.php');
 

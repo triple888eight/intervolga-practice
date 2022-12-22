@@ -42,14 +42,13 @@ class ReviewStorage
     }
 
     // Функция отображения базы данных постранично
-    public function getNavReviews($page)
+    public function getFeedbackByPage($page)
     {
         $rows = $this->connection->query('SELECT count(*) FROM reviews')->fetchColumn(); // Получаем количество записей
 
         // Проверяем GET запрос,
         if (($page - 1 > $rows / 20) || ($page <= 0)) {
-            $reviews = [];
-            return $reviews;
+            throw new \Exception('Not found');
         }
 
         $records = 20; // Сколько выводим записей
@@ -63,31 +62,7 @@ class ReviewStorage
         $stmt = $this->connection->prepare($sql);
 
         $stmt->execute([':page' => $page, ':records' => $records]);
-        $reviews = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        // JSON_UNESCAPED_UNICODE необходим для кириллицы
-        return json_encode($reviews,JSON_UNESCAPED_UNICODE);
-    }
-
-    // Функция добавления отзыва
-    public function addReview($data)
-    {
-
-        $guest_id = $data['guest_id'];
-        $rating = $data['rating'];
-        $review = $data['review'];
-        $date = $data['date'];
-
-        $sql = 'INSERT INTO reviews (guest_id, rating, review, date)
-                VALUES (:guest_id, :rating, :review, :date);';
-
-        $stmt = $this->connection->prepare($sql);
-
-        $result = $stmt->execute([':guest_id' => $guest_id, ':rating' => $rating, ':review' => $review, ':date' => $date]);
-
-        $response = 'Запись добавлена, проверяйте!';
-
-        return $response;
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function deleteReview($data)
@@ -98,14 +73,14 @@ class ReviewStorage
                 WHERE id = :id;';
 
         $stmt = $this->connection->prepare($sql);
-        $result = $stmt->execute([':id' => $id]);
+        $stmt->execute([':id' => $id]);
 
         $response = 'Запись удалена, проверяйте!';
 
         return $response;
     }
 
-    public function addReviewByJs ($data)
+    public function addReview($data)
     {
         $guest_id = $data['guest_id'];
         $rating = $data['rating'];

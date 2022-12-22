@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Controllers;
-use App\DB\Connection;
 use App\ReviewStorage;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -44,18 +43,32 @@ class FeedbackController {
         $page = isset($params['page']) ? (int)$params['page'] : 1;
 
         // Вызывается метод из reviewStorage
-        $result = $this->reviewStorage->getNavReviews($page);
+        try {
+            $result = $this->reviewStorage->getFeedbackByPage($page);
+        } catch(\Exception $e) {
+            $response = $response->withStatus(404);
+            $result = array(
+                'status' => 404,
+                'error' => $e->getMessage(),
+            );
+        }
 
-        $response->getBody()->write($result);
+        $response->getBody()->write(json_encode($result, JSON_UNESCAPED_UNICODE));
+
+        /*$result = json_encode($result, JSON_UNESCAPED_UNICODE);
+
+        $result = json_decode($result, JSON_UNESCAPED_UNICODE);
+
+        print_r($result[0]['rating']);*/
 
         return $response;
     }
 
-    public function AddingReviewByJs($request, $response) {
+    public function addingReviewByJs($request, $response) {
         // Получаю значения с формы в массив
         $data = $request->getParsedBody();
 
-        $result = $this->reviewStorage->addReviewByJs($data);
+        $result = $this->reviewStorage->addReview($data);
 
         $response->getBody()->write(json_encode($result));
 
