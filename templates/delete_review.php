@@ -6,7 +6,6 @@
     <style>
         <?php include "css/style.css" ?>
     </style>
-    <?php require_once('logic.php');?>
 </head>
 <body>
     <div>
@@ -27,26 +26,34 @@
         <table class="table">
             <caption>Отзывы. Отсортированы по дате добавления</caption>
             <thead>
-                <tr>
-                    <th>id</th>
-                    <th>Номер гостя</th>
-                    <th>Рейтинг</th>
-                    <th>Отзыв</th>
-                    <th>Дата добавления</th>
-                </tr>
+            <tr>
+                <th>id</th>
+                <th>Номер гостя</th>
+                <th>Рейтинг</th>
+                <th>Отзыв</th>
+                <th>Дата добавления</th>
+            </tr>
             </thead>
 
-            <tbody>
-                <?php foreach($reviews as $review): ?>
-                    <tr>
-                        <td><?= $review['id']?></td>
-                        <td><?= $review['guest_id']?></td>
-                        <td><?= $review['rating']?></td>
-                        <td><?= $review['review']?></td>
-                        <td><?= $review['date']?></td>
-                    </tr>
-                <?php endforeach; ?>
+            <tbody id = "tbody">
+            <tr>
+
+            </tr>
             </tbody>
         </table>
+
+        <form method = "GET" action="/api/feedbacks/" id = "getPages">
+            <input type = "hidden" id = "page" value = "0" name = "page">
+        </form>
+
+        <div class="btn-container">
+            <button class="btn" type="submit" id = "previous">Предыдущая страница</button>
+            <button class="btn" type="submit" id = "next">Следующая страница</button>
+        </div>
     </div>
+
+    <script>
+        <?php require_once("../scripts/jquery_min.js");?>
+        <?php require_once("../scripts/script.js");?>
+    </script>
 </body>

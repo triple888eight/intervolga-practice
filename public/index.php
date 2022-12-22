@@ -8,6 +8,14 @@ use Tuupola\Middleware\HttpBasicAuthentication as Auth;
 
 require __DIR__ . '/../vendor/autoload.php'; // Автозагрузка
 
+$config = include(__DIR__ . '/../config/config.php');
+
+try {
+    $connection = new \PDO("sqlite:" . $config['dataBasePath']);
+} catch (\PDOException $e) {
+    throw new ConnectionException('Ошибка при подключении к базе данных', 0, $e);
+}
+
 $app = AppFactory::create();
 
 /*$app->setBasePath("/composer/public/index.php"); // Указываю базовый путь, иначе ошибка*/
@@ -18,11 +26,14 @@ $app->get('/hello', \App\Controllers\HelloController::class . ':hello');
 // Hello, {name}
 $app->get('/hello/{name}', \App\Controllers\HelloController::class . ':helloName');
 
+$reviewStorage = new \App\ReviewStorage($connection);
+$feedbackController = new \App\Controllers\FeedbackController($reviewStorage);
+
 // Получение отзыва по id
-$app->get('/api/feedbacks/{id}/', \App\Controllers\FeedbackController::class . ':getFeedbackById');
+$app->get('/api/feedbacks/{id}/', array($feedbackController, 'getFeedbackById'));
 
 // Постраничный вывод отзывов, страницы указывается как page=...
-$app->get('/api/feedbacks/', \App\Controllers\FeedbackController::class . ':getFeedbacksPageByPage');
+$app->get('/api/feedbacks/', array($feedbackController, 'getFeedbacksPageByPage'));
 
 // Отображение страницы для добавления пользователя
 $app->get('/api/add', function (Request $request, Response $response){
@@ -33,7 +44,7 @@ $app->get('/api/add', function (Request $request, Response $response){
 });
 
 // Добавление отзыва с помощью Js и AJAX
-$app->post('/api/adding', \App\Controllers\AddingController::class . ':AddingReviewByJs');
+$app->post('/api/adding', array($feedbackController, 'AddingReviewByJs'));
 
 $config = include(__DIR__ . '/../config/config.php');
 
@@ -54,10 +65,6 @@ $app->get('/admin/delete', function (Request $request, Response $response){
     return $renderer->render($response,"delete_review.php");
 });
 
-$app->post('/admin/deleting', \App\Controllers\DeletingController::class . ':deleteReviewById');
+$app->post('/admin/deleting', array($feedbackController, 'deleteReviewById'));
 
-try {
-    $app->run();
-} catch (Exception $e) {
-    echo "Адрес не поддерживается";
-}
+$app->run();

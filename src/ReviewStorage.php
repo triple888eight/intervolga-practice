@@ -3,16 +3,26 @@
 namespace App;
 
 // Запросы к БД
-class reviewStorage
+class ReviewStorage
 {
+    private \PDO $connection;
     // Функция для вывода отзыва по id
-    public function getReviewById($id, $pdo)
+
+    /**
+     * @param \PDO $connection
+     */
+    public function __construct(\PDO $connection)
+    {
+        $this->connection = $connection;
+    }
+
+    public function getReviewById($id)
     {
         $sql = 'SELECT * 
                 FROM reviews 
                 WHERE id = :id;';
         // Подготовка запроса
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
 
         if(!$stmt){
             echo "Prepare failed";
@@ -20,17 +30,21 @@ class reviewStorage
 
         $stmt->execute([':id' => $id]);
         // Массив для отзывов
-        $reviews = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$result) {
+            throw new \Exception('Not found');
+        }
 
         // JSON_UNESCAPED_UNICODE необходим для кириллицы
-        return json_encode($reviews,JSON_UNESCAPED_UNICODE);
+        return $result;
     }
 
     // Функция отображения базы данных постранично
-    public function getNavReviews($page, $pdo)
+    public function getNavReviews($page)
     {
-        $rows = $pdo->query('SELECT count(*)
-                             FROM reviews')->fetchColumn(); // Получаем количество записей
+        $rows = $this->connection->query('SELECT count(*) FROM reviews')->fetchColumn(); // Получаем количество записей
 
         // Проверяем GET запрос,
         if (($page - 1 > $rows / 20) || ($page <= 0)) {
@@ -46,7 +60,7 @@ class reviewStorage
                 FROM reviews 
                 ORDER BY date asc
                 LIMIT :page, :records;';
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
 
         $stmt->execute([':page' => $page, ':records' => $records]);
         $reviews = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -56,7 +70,7 @@ class reviewStorage
     }
 
     // Функция добавления отзыва
-    public function addReview($pdo, $data)
+    public function addReview($data)
     {
 
         $guest_id = $data['guest_id'];
@@ -67,7 +81,7 @@ class reviewStorage
         $sql = 'INSERT INTO reviews (guest_id, rating, review, date)
                 VALUES (:guest_id, :rating, :review, :date);';
 
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
 
         $result = $stmt->execute([':guest_id' => $guest_id, ':rating' => $rating, ':review' => $review, ':date' => $date]);
 
@@ -76,14 +90,14 @@ class reviewStorage
         return $response;
     }
 
-    public function deleteReview($pdo, $data)
+    public function deleteReview($data)
     {
         $id = $data['id'];
 
         $sql = 'DELETE FROM reviews
                 WHERE id = :id;';
 
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $result = $stmt->execute([':id' => $id]);
 
         $response = 'Запись удалена, проверяйте!';
@@ -91,7 +105,7 @@ class reviewStorage
         return $response;
     }
 
-    public function addReviewByJs ($pdo, $data)
+    public function addReviewByJs ($data)
     {
         $guest_id = $data['guest_id'];
         $rating = $data['rating'];
@@ -110,7 +124,7 @@ class reviewStorage
         $sql = 'INSERT INTO reviews (guest_id, rating, review, date)
                 VALUES (:guest_id, :rating, :review, :date);';
 
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
 
         $result = $stmt->execute([':guest_id' => $guest_id, ':rating' => $rating, ':review' => $review, ':date' => $date]);
 

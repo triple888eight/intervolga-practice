@@ -2,48 +2,71 @@
 
 namespace App\Controllers;
 use App\DB\Connection;
-use App\reviewStorage;
+use App\ReviewStorage;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class FeedbackController {
 
-    public function getFeedbackById ($request, $response, $args) {
-        $pdo = Connection::connect(); // Подключение к БД
+    private ReviewStorage $reviewStorage;
 
-        if ($pdo == null) {
-            return "Ошибка при подключении к базе данных";
-        }
+    /**
+     * @param ReviewStorage $reviewStorage
+     */
+    public function __construct(ReviewStorage $reviewStorage)
+    {
+        $this->reviewStorage = $reviewStorage;
+    }
 
-        $sqlite = new reviewStorage;
+    public function getFeedbackById (ServerRequestInterface $request, ResponseInterface $response, array $args) {
+
         $id = (int)$args['id'];
 
-        $result = $sqlite->getReviewById($id, $pdo);
+        try {
+            $result = $this->reviewStorage->getReviewById($id);
+        } catch(\Exception $e) {
+             $response = $response->withStatus(404);
+             $result = array(
+                 'status' => 404,
+                 'error' => $e->getMessage(),
+             );
+        }
+
+        $response->getBody()->write(json_encode($result, JSON_UNESCAPED_UNICODE));
+
+        return $response;
+    }
+
+    public function getFeedbacksPageByPage(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        // Берем значение page из GET запроса, если его нет, то выводится 1 страница
+        $params = $request->getQueryParams();
+        $page = isset($params['page']) ? (int)$params['page'] : 1;
+
+        // Вызывается метод из reviewStorage
+        $result = $this->reviewStorage->getNavReviews($page);
 
         $response->getBody()->write($result);
 
         return $response;
     }
 
-    public function getFeedbacksPageByPage($request, $response) {
-        $pdo = Connection::connect(); // Подключение к БД
+    public function AddingReviewByJs($request, $response) {
+        // Получаю значения с формы в массив
+        $data = $request->getParsedBody();
 
-        if ($pdo == null) {
-            return "Ошибка при подключении к базе данных";
-        }
+        $result = $this->reviewStorage->addReviewByJs($data);
 
-        $sqlite = new reviewStorage;
+        $response->getBody()->write(json_encode($result));
 
-        // Берем значение page из GET запроса, если его нет, то выводится 1 страница
-        if($_GET) {
-            $params = $request->getQueryParams();
-            $page = (integer)$params['page'];
-        }
-        else {
-            $page = 1;
-        }
+        return $response;
+    }
 
-        // Вызывается метод из reviewStorage
-        $result = $sqlite->getNavReviews($page, $pdo);
+    public function deleteReviewById($request, $response){
+        // Получаю значения с формы в массив
+        $data = $request->getParsedBody();
 
+        $result = $this->reviewStorage->deleteReview($data);
         $response->getBody()->write($result);
 
         return $response;
