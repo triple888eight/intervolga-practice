@@ -90,7 +90,7 @@ $('#addPost').on('submit', function (e){
         },
         error: function(data) {
             document.write(JSON.stringify(data)); // Вывожу сообщение из функции addReview
-            /*alert(JSON.stringify(data));*/
+            /*alert(data);*/
         }
 
     });

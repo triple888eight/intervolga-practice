@@ -57,19 +57,12 @@ class FeedbackController {
 
         $response->getBody()->write(json_encode($result, JSON_UNESCAPED_UNICODE));
 
-        /*$result = json_encode($result, JSON_UNESCAPED_UNICODE);
-
-        $result = json_decode($result, JSON_UNESCAPED_UNICODE);
-
-        print_r($result[0]['rating']);*/
-
         return $response;
     }
 
     public function addingReview(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface{
         // Получаю значения с формы в массив
         $data = $request->getParsedBody();
-
 
         $review = new Review(null, $data['guest_id'], $data['rating'], $data['review'], DateTime::createFromFormat('Y-m-d', $data['date']));
 
@@ -95,7 +88,9 @@ class FeedbackController {
         try {
             $review = $this->reviewStorage->getReviewById($id);
         } catch (\Exception $e) {
-            return $response->withStatus(404);
+            $response = $response->withStatus(404);
+            $response->getBody()->write(json_encode(array('status' => 404, 'error' => $e->getMessage())));
+            return $response;
         }
         try {
             $this->reviewStorage->deleteReview($review);
