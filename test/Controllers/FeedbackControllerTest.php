@@ -155,10 +155,9 @@ class FeedbackControllerTest extends TestCase
 
         $request->expects($this->once())->method('getParsedBody')->willReturn(array('id' => 1));
         $review = new Review(1, 1, 5, 'Text', new DateTime());
+
         $reviewStorage->expects($this->once())->method('getReviewById')->with(1)->willReturn($review);
         $reviewStorage->expects($this->once())->method('deleteReview')->with($review);
-        /*$response->expects($this->once())->method('getBody')->willReturn($stream);
-        $stream->expects($this->once())->method('write')->with();*/
         $response->expects($this->once())->method('withStatus')->with(204)->willReturnSelf();
 
         $controller->deleteReviewById($request, $response);
@@ -174,7 +173,6 @@ class FeedbackControllerTest extends TestCase
         $controller = new FeedbackController($reviewStorage);
 
         $request->expects($this->once())->method('getParsedBody')->willReturn(array('id' => 85));
-        $review = new Review(1, 1, 5, 'Text', new DateTime());
 
         $result = array('status' => 404, 'error' => 'Not found');
 
@@ -185,4 +183,28 @@ class FeedbackControllerTest extends TestCase
 
         $controller->deleteReviewById($request, $response);
     }
+
+    public function testDeleteReviewByIdNotDeleted(): void
+    {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+
+        $reviewStorage = $this->createMock(ReviewStorage::class);
+        $controller = new FeedbackController($reviewStorage);
+
+        $request->expects($this->once())->method('getParsedBody')->willReturn(array('id' => 1));
+        $review = new Review(1, 1, 5, 'Text', new DateTime());
+
+        $result = array('status' => 500, 'error' => 'Review was not deleted');
+
+        $reviewStorage->expects($this->once())->method('getReviewById')->with(1)->willReturn($review);
+        $reviewStorage->expects($this->once())->method('deleteReview')->with($review)->willThrowException(new \Exception('Review was not deleted'));
+        $response->expects($this->once())->method('withStatus')->with(500)->willReturnSelf();
+        $response->expects($this->once())->method('getBody')->willReturn($stream);
+        $stream->expects($this->once())->method('write')->with(json_encode($result, JSON_UNESCAPED_UNICODE));
+
+        $controller->deleteReviewById($request, $response);
+    }
+
 }

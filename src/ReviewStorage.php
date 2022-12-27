@@ -8,7 +8,6 @@ use DateTime;
 class ReviewStorage
 {
     private \PDO $connection;
-    // Функция для вывода отзыва по id
 
     /**
      * @param \PDO $connection
@@ -18,6 +17,7 @@ class ReviewStorage
         $this->connection = $connection;
     }
 
+    // Функция для вывода отзыва по id
     public function getReviewById(int $id): Review
     {
         $sql = 'SELECT * 
@@ -26,9 +26,9 @@ class ReviewStorage
         // Подготовка запроса
         $stmt = $this->connection->prepare($sql);
 
-        if(!$stmt){
+        /*if(!$stmt){
             echo "Prepare failed";
-        }
+        }*/
 
         $stmt->execute([':id' => $id]);
         // Массив для отзывов
@@ -46,7 +46,7 @@ class ReviewStorage
     // Функция отображения базы данных постранично
     public function getFeedbackByPage($page)
     {
-        $rows = $this->connection->query('SELECT count(*) FROM reviews')->fetchColumn(); // Получаем количество записей
+        $rows = $this->connection->query('SELECT count(*) FROM reviews;')->fetchColumn(); // Получаем количество записей
 
         // Проверяем GET запрос,
         if (($page - 1 > $rows / 20) || ($page <= 0)) {
@@ -99,7 +99,7 @@ class ReviewStorage
         $stmt = $this->connection->prepare($sql);
 
         if (!$stmt->execute([':id' => $review->id])) {
-            throw new \Exception('Failed to delete review');
+            throw new \Exception('Review was not deleted');
         }
 
     }

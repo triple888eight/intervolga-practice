@@ -97,7 +97,7 @@ class FeedbackController {
             $response = $response->withStatus(204);
         } catch (\Exception $e) {
             $response = $response->withStatus(500);
-            $response->getBody()->write(json_encode(array('error' => $e->getMessage(), 'status' => 500)));
+            $response->getBody()->write(json_encode(array('status' => 500, 'error' => $e->getMessage())));
         }
 
         return $response;
