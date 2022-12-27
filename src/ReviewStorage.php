@@ -3,6 +3,8 @@
 namespace App;
 
 // Запросы к БД
+use DateTime;
+
 class ReviewStorage
 {
     private \PDO $connection;
@@ -16,7 +18,7 @@ class ReviewStorage
         $this->connection = $connection;
     }
 
-    public function getReviewById($id)
+    public function getReviewById(int $id): Review
     {
         $sql = 'SELECT * 
                 FROM reviews 
@@ -38,7 +40,7 @@ class ReviewStorage
         }
 
         // JSON_UNESCAPED_UNICODE необходим для кириллицы
-        return $result;
+        return new Review($result['id'], $result['guest_id'], $result['rating'], $result['review'], DateTime::createFromFormat('Y-m-d', $result['date']));
     }
 
     // Функция отображения базы данных постранично
@@ -65,51 +67,39 @@ class ReviewStorage
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function deleteReview($data)
+
+    public function addReview(Review $review): void
     {
-        $id = $data['id'];
 
-        $sql = 'DELETE FROM reviews
-                WHERE id = :id;';
-
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute([':id' => $id]);
-
-        $response = 'Запись удалена, проверяйте!';
-
-        return $response;
-    }
-
-    public function addReview($data)
-    {
-        $guest_id = $data['guest_id'];
-        $rating = $data['rating'];
-        $review = $data['review'];
-        $date = $data['date'];
-
-        // Количество не пустых элементов в массиве
-        $filledValues = count(array_filter($data));
-
-        // Если не все поля заполнены
-        if(count($data) != $filledValues)
-        {
-            return "Ошибка. Заполните все поля";
-        }
-
-        $sql = 'INSERT INTO reviews (guest_id, rating, review, date)
-                VALUES (:guest_id, :rating, :review, :date);';
+        $sql = 'INSERT INTO reviews (guest_id, rating, review, date) VALUES (:guest_id, :rating, :review, :date);';
 
         $stmt = $this->connection->prepare($sql);
 
-        $result = $stmt->execute([':guest_id' => $guest_id, ':rating' => $rating, ':review' => $review, ':date' => $date]);
+        $result = $stmt->execute([':guest_id' => $review->guestId, ':rating' => $review->rating, ':review' => $review->review, ':date' => $review->date->format('Y-m-d')]);
 
         // Если не получился запрос
         if(!$result)
         {
-            return "Ошибка при добавлении в базу данных";
+            throw new \Exception('Review was not added');
         }
 
-        return "Запись успешно добавлена. Проверяйте";
+        $review->id = $this->connection->lastInsertId();
+    }
+
+    public function deleteReview(Review $review): void
+    {
+        if(!isset($review->id)) {
+            throw new \Exception('Not found');
+        }
+
+        $sql = 'DELETE FROM reviews WHERE id = :id;';
+
+        $stmt = $this->connection->prepare($sql);
+
+        if (!$stmt->execute([':id' => $review->id])) {
+            throw new \Exception('Failed to delete review');
+        }
+
     }
 }
 

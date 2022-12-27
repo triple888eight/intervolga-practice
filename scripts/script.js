@@ -85,10 +85,12 @@ $('#addPost').on('submit', function (e){
         data: form.serialize(), // Получаю данные с формы
         success: function(data)
         {
-            alert(data); // Вывожу сообщение из функции addReviewByJs
+            /*alert(data);*/ // Вывожу сообщение из функции addReview
+            document.write(JSON.stringify(data));
         },
         error: function(data) {
-            alert('Ошибка');
+            document.write(JSON.stringify(data)); // Вывожу сообщение из функции addReview
+            /*alert(JSON.stringify(data));*/
         }
 
     });

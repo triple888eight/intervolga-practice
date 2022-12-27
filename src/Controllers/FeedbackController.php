@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Controllers;
+use App\Review;
 use App\ReviewStorage;
+use DateTime;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -64,23 +66,44 @@ class FeedbackController {
         return $response;
     }
 
-    public function addingReviewByJs($request, $response) {
+    public function addingReview(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface{
         // Получаю значения с формы в массив
         $data = $request->getParsedBody();
 
-        $result = $this->reviewStorage->addReview($data);
 
-        $response->getBody()->write(json_encode($result));
+        $review = new Review(null, $data['guest_id'], $data['rating'], $data['review'], DateTime::createFromFormat('Y-m-d', $data['date']));
+
+        try {
+            $this->reviewStorage->addReview($review);
+            $response = $response->withStatus(201);
+            $response->getBody()->write(json_encode(array('id' => $review->id)));
+        } catch(\Exception $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(array(
+                'status' => 500,
+                'error' => $e->getMessage(),
+            )));
+        }
 
         return $response;
     }
 
-    public function deleteReviewById($request, $response){
+    public function deleteReviewById(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface{
         // Получаю значения с формы в массив
         $data = $request->getParsedBody();
-
-        $result = $this->reviewStorage->deleteReview($data);
-        $response->getBody()->write($result);
+        $id = $data['id'];
+        try {
+            $review = $this->reviewStorage->getReviewById($id);
+        } catch (\Exception $e) {
+            return $response->withStatus(404);
+        }
+        try {
+            $this->reviewStorage->deleteReview($review);
+            $response = $response->withStatus(204);
+        } catch (\Exception $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(array('error' => $e->getMessage(), 'status' => 500)));
+        }
 
         return $response;
     }
