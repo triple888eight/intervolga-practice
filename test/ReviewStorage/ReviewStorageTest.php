@@ -41,4 +41,18 @@ class ReviewStorageTest extends TestCase
         $this->assertSame(1, $review->id);
     }
 
+    public function testGetReviewByIdNotFound(): void
+    {
+        $this->expectException(\Exception::class);
+
+        ReviewStorageTest::$pdo->query('INSERT INTO reviews (id, guest_id, rating, review, date)
+                                                 VALUES (1, 1, 5, "Все хорошо", "2022-05-12");'); // создание записи
+
+        $storage = new ReviewStorage(ReviewStorageTest::$pdo);
+
+        $storage->getReviewById(2);
+
+        $this->expectExceptionMessage('Not found');
+    }
+
 }
