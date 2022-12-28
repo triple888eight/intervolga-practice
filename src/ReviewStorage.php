@@ -26,10 +26,6 @@ class ReviewStorage
         // Подготовка запроса
         $stmt = $this->connection->prepare($sql);
 
-        /*if(!$stmt){
-            echo "Prepare failed";
-        }*/
-
         $stmt->execute([':id' => $id]);
         // Массив для отзывов
 
@@ -39,7 +35,6 @@ class ReviewStorage
             throw new \Exception('Not found');
         }
 
-        // JSON_UNESCAPED_UNICODE необходим для кириллицы
         return new Review($result['id'], $result['guest_id'], $result['rating'], $result['review'], DateTime::createFromFormat('Y-m-d', $result['date']));
     }
 
