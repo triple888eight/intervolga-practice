@@ -70,15 +70,12 @@ class ReviewStorage
 
         $stmt = $this->connection->prepare($sql);
 
-        print_r($review);
-
-        $result = $stmt->execute([':guest_id' => $review->guestId, ':rating' => $review->rating, ':review' => $review->review, ':date' => $review->date->format('Y-m-d')]);
-
-        // Если не получился запрос
-        if(!$result)
+        if (!$stmt)
         {
             throw new \Exception('Review was not added');
         }
+
+        $result = $stmt->execute([':guest_id' => $review->guestId, ':rating' => $review->rating, ':review' => $review->review, ':date' => $review->date->format('Y-m-d')]);
 
         $review->id = $this->connection->lastInsertId();
     }
@@ -93,9 +90,12 @@ class ReviewStorage
 
         $stmt = $this->connection->prepare($sql);
 
-        if (!$stmt->execute([':id' => $review->id])) {
+        if (!$stmt)
+        {
             throw new \Exception('Review was not deleted');
         }
+
+        $stmt->execute([':id' => $review->id]);
 
     }
 }
